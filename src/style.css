@@ -1,11 +1,95 @@
-body { font-family: system-ui, sans-serif; margin: 0; background: #f5f6f8; color: #1d2330; }
-#app { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
-header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-header span { font-size: 0.8rem; color: #566; word-break: break-all; }
-.card { background: #fff; border-radius: 8px; padding: 16px; margin: 16px 0; box-shadow: 0 1px 3px #0002; }
-label { display: block; font-size: 0.85rem; margin: 6px 0; }
-input, textarea { width: 100%; box-sizing: border-box; padding: 6px; font: inherit; }
-button { padding: 6px 12px; cursor: pointer; }
-.row { display: flex; gap: 8px; margin-top: 8px; }
-.hint { color: #788; font-size: 0.85rem; }
-.msg { color: #a33; min-height: 1.2em; }
+/* ---------- Tokens ----------
+   Each action color has a base fill and a darker "lip" used as the 3D edge. */
+:root {
+  --bg: #fff6e5;
+  --surface: #ffffff;
+  --ink: #1e2247;
+  --muted: #646a92;
+
+  --border: #e2d6bc;
+  --border-lip: #cdbe9e;
+
+  --blue: #2b5bff;   --blue-lip: #1637b8;   --blue-tint: #dde6ff;
+  --amber: #ffb81c;  --amber-lip: #c98500;  --amber-tint: #ffefc2;
+  --coral: #ff5e5b;  --coral-lip: #c2373a;  --coral-tint: #ffdcdb;
+
+  --radius: 16px;
+  --font: "Nunito", "Segoe UI Variable Display", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-weight: 600; font-size: 1rem; line-height: 1.45; }
+#app { max-width: 760px; margin: 0 auto; padding: 20px 16px 80px; }
+h1, h2, h3 { font-weight: 900; margin: 0 0 8px; line-height: 1.15; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.4rem; }
+p { margin: 0 0 8px; }
+
+/* ---------- Buttons: solid bottom lip that presses flat ---------- */
+.btn {
+  --fill: var(--blue); --lip: var(--blue-lip); --text: #fff;
+  font: inherit; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 12px 20px; border: 0; border-radius: 14px; cursor: pointer;
+  background: var(--fill); color: var(--text); border-bottom: 4px solid var(--lip);
+}
+.btn:active:not(:disabled) { transform: translateY(4px); border-bottom-width: 0px; margin-bottom: 4px; }
+.btn:disabled { --fill: #e9e2d2; --lip: var(--border-lip); --text: #9b957f; cursor: not-allowed; }
+.btn-amber { --fill: var(--amber); --lip: var(--amber-lip); --text: var(--ink); }
+.btn-coral { --fill: var(--coral); --lip: var(--coral-lip); }
+.btn-ghost { --fill: var(--surface); --lip: var(--border-lip); --text: var(--ink); border: 2px solid var(--border); border-bottom: 4px solid var(--lip); }
+.btn-ghost:active:not(:disabled) { border-bottom-width: 2px; margin-bottom: 2px; transform: translateY(2px); }
+.btn-small { padding: 8px 12px; font-size: 0.75rem; }
+
+/* ---------- Tiles & inputs: chunky with a thick bottom lip ---------- */
+.tile {
+  background: var(--surface); border: 2px solid var(--border); border-bottom: 5px solid var(--border-lip);
+  border-radius: var(--radius); padding: 20px; margin: 16px 0;
+}
+.tile-click { cursor: pointer; width: 100%; text-align: left; font: inherit; color: inherit; display: block; }
+.tile-click:active { transform: translateY(3px); border-bottom-width: 2px; margin-bottom: 19px; }
+
+input, textarea {
+  width: 100%; font: inherit; font-weight: 600; color: var(--ink);
+  background: var(--surface); border: 2px solid var(--border); border-bottom: 4px solid var(--border-lip);
+  border-radius: 12px; padding: 12px 14px;
+}
+input:focus, textarea:focus { outline: none; border-color: var(--blue); border-bottom-color: var(--blue-lip); }
+label { display: block; font-size: 0.75rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 12px 0 6px; }
+
+/* ---------- Layout helpers ---------- */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 900; background: none; border: 0; padding: 0; color: var(--ink); font-family: inherit; cursor: pointer; }
+.logo-mark { width: 38px; height: 38px; display: grid; place-items: center; background: var(--amber); border-bottom: 4px solid var(--amber-lip); border-radius: 12px; }
+.user { font-size: 0.8rem; color: var(--muted); }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.row-end { justify-content: flex-end; }
+.grow { flex: 1; min-width: 160px; }
+.spread { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.muted { color: var(--muted); }
+
+/* ---------- Badges & visibility toggle ---------- */
+.badge { display: inline-block; font-size: 0.7rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 8px; border-radius: 8px; border-bottom: 3px solid; white-space: nowrap; }
+.badge-private { background: var(--blue-tint); color: var(--blue-lip); border-color: var(--blue); }
+.badge-public { background: var(--amber-tint); color: #7a4f00; border-color: var(--amber-lip); }
+.badge-clone { background: var(--coral-tint); color: var(--coral-lip); border-color: var(--coral); }
+
+.segmented { display: flex; gap: 10px; }
+.segmented .btn { flex: 1; }
+
+/* ---------- Messages ---------- */
+.message { text-align: center; padding: 28px 20px; }
+.message-icon { font-size: 2.2rem; display: block; margin-bottom: 6px; }
+.message-error { background: var(--coral-tint); border-color: var(--coral); border-bottom-color: var(--coral-lip); }
+.spinner { width: 34px; height: 34px; margin: 0 auto 10px; border: 5px solid var(--blue-tint); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 14px; border-bottom: 4px solid #000; font-weight: 800; }
+
+/* ---------- Deck editor ---------- */
+.card-num { font-weight: 900; color: var(--blue); }
+
+/* ---------- Deck list item: info on the left, badge + Study on the right ---------- */
+.deck-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.deck-info { flex: 1; min-width: 0; }
+.deck-info h2 { margin-bottom: 4px; }
+.deck-info p { margin: 0; }
+.deck-side { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
