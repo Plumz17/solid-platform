@@ -84,8 +84,28 @@ label { display: block; font-size: 0.75rem; font-weight: 900; letter-spacing: 0.
 @keyframes spin { to { transform: rotate(360deg); } }
 .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 14px; border-bottom: 4px solid #000; font-weight: 800; }
 
-/* ---------- Deck editor ---------- */
+/* ---------- Flashcards ---------- */
+.flash-side { display: block; font-size: 0.7rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.flash-text { display: block; font-size: 1.15rem; font-weight: 800; }
+
+/* 3D flip: two faces stacked in one grid cell, the wrapper rotates 180deg on Y.
+   The overshoot easing makes the card snap over with a little bounce. */
+.flip { display: block; width: 100%; margin: 16px 0; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; perspective: 1100px; }
+.flip:active { transform: translateY(3px); }
+.flip-inner { display: grid; transform-style: preserve-3d; transition: transform 0.65s cubic-bezier(0.34, 1.45, 0.5, 1); }
+.flip.is-flipped .flip-inner { transform: rotateY(180deg); }
+.flip-face { grid-area: 1 / 1; margin: 0; min-height: 96px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.flip-back { transform: rotateY(180deg); background: var(--amber-tint); border-color: var(--amber); border-bottom-color: var(--amber-lip); }
+.flip-face.tall { min-height: 240px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 8px; }
+.flip-face.tall .flash-text { font-size: 1.6rem; }
+.flip.deal { animation: deal 0.4s cubic-bezier(0.34, 1.45, 0.5, 1); }
+@keyframes deal { from { opacity: 0; transform: translateY(28px) rotate(-4deg) scale(0.94); } }
+@media (prefers-reduced-motion: reduce) { .flip-inner { transition: none; } .flip.deal { animation: none; } }
 .card-num { font-weight: 900; color: var(--blue); }
+
+/* ---------- Study mode ---------- */
+.progress { height: 18px; background: var(--surface); border: 2px solid var(--border); border-bottom: 4px solid var(--border-lip); border-radius: 12px; overflow: hidden; margin-bottom: 6px; }
+.progress-fill { height: 100%; background: var(--amber); border-right: 4px solid var(--amber-lip); transition: width 0.25s; }
 
 /* ---------- Deck list item: info on the left, badge + Study on the right ---------- */
 .deck-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
